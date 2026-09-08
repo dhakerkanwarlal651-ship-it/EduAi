@@ -707,83 +707,156 @@ const eduaiStudyData = {
 
 function openEduAIClass(className) {
 
-  // School classes ke liye Board Selection
-  const schoolClasses = [
-    "Class 1–5",
-    "Class 6–8",
-    "Class 9–10",
-    "Class 11–12"
-  ];
+  const classGroups = {
+    "Class 1–5": ["Class 1", "Class 2", "Class 3", "Class 4", "Class 5"],
+    "Class 6–8": ["Class 6", "Class 7", "Class 8"],
+    "Class 9–10": ["Class 9", "Class 10"],
+    "Class 11–12": ["Class 11", "Class 12"]
+  };
 
-  if (schoolClasses.includes(className)) {
+  const classes = classGroups[className];
 
-    const boards = [
-      "CBSE",
-      "MP Board",
-      "Rajasthan Board",
-      "UP Board",
-      "Bihar Board",
-      "Maharashtra Board",
-      "Gujarat Board",
-      "Haryana Board",
-      "Punjab Board",
-      "CISCE / ICSE",
-      "West Bengal Board",
-      "Karnataka Board",
-      "Tamil Nadu Board",
-      "Andhra Pradesh Board",
-      "Telangana Board",
-      "Other Boards"
-    ];
-
-    let html = `
-      <div id="eduaiStudyScreen" class="edu-study-page">
-
-        <div class="edu-study-header">
-          <button onclick="location.reload()">←</button>
-          <div>
-            <h2>${className}</h2>
-            <p>अपना Board चुनें</p>
-          </div>
-        </div>
-
-        <div class="edu-study-body">
-
-          <div class="edu-info-card">
-            <h3>📚 Board के अनुसार Syllabus</h3>
-            <p>
-              अपने स्कूल Board को चुनें। इसके बाद Class → Subject →
-              Chapter → पूरा Chapter पढ़ सकते हैं।
-            </p>
-          </div>
-
-          <div class="edu-subject-grid">
-    `;
-
-    boards.forEach(board => {
-      html += `
-        <div class="edu-subject-card"
-             onclick="openEduAIBoard('${className}', '${board}')">
-          <div style="font-size:32px;">📚</div>
-          <h3>${board}</h3>
-          <p>${className}</p>
-        </div>
-      `;
-    });
-
-    html += `
-          </div>
-        </div>
-      </div>
-    `;
-
-    document.body.insertAdjacentHTML("beforeend", html);
+  if (!classes) {
     return;
   }
 
-  // बाकी courses के लिए पुराना behaviour
-  openEduAISubject(className, "");
+  let html = `
+    <div id="eduaiStudyScreen" class="edu-study-page">
+
+      <div class="edu-study-header">
+        <button onclick="location.reload()">←</button>
+
+        <div>
+          <h2>📚 ${className}</h2>
+          <p>अपनी Class चुनें</p>
+        </div>
+      </div>
+
+      <div class="edu-study-body">
+
+        <div class="edu-info-card">
+          <h3>🎓 Class Selection</h3>
+          <p>
+            अपनी exact class चुनें। इसके बाद अपना Board
+            और Subject चुन सकते हैं।
+          </p>
+        </div>
+
+        <div class="edu-subject-grid">
+  `;
+
+  classes.forEach(cls => {
+
+    html += `
+      <div class="edu-subject-card"
+           onclick="openEduAIClassNumber('${cls}')">
+
+        <div style="font-size:36px;">🎓</div>
+
+        <h3>${cls}</h3>
+
+        <p>Board चुनें →</p>
+
+      </div>
+    `;
+
+  });
+
+  html += `
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.insertAdjacentHTML("beforeend", html);
 }
+
+
+/* =========================================
+   EXACT CLASS → BOARD SELECTION
+   ========================================= */
+
+function openEduAIClassNumber(className) {
+
+  const boards = [
+    "CBSE",
+    "MP Board",
+    "Rajasthan Board",
+    "UP Board",
+    "Bihar Board",
+    "Maharashtra Board",
+    "Gujarat Board",
+    "Haryana Board",
+    "Punjab Board",
+    "CISCE / ICSE",
+    "West Bengal Board",
+    "Karnataka Board",
+    "Tamil Nadu Board",
+    "Andhra Pradesh Board",
+    "Telangana Board",
+    "Chhattisgarh Board",
+    "Odisha Board",
+    "Jharkhand Board",
+    "Kerala Board",
+    "Assam Board",
+    "Uttarakhand Board",
+    "Himachal Pradesh Board",
+    "Jammu & Kashmir Board",
+    "Goa Board",
+    "Other Board"
+  ];
+
+  let html = `
+    <div id="eduaiStudyScreen" class="edu-study-page">
+
+      <div class="edu-study-header">
+        <button onclick="location.reload()">←</button>
+
+        <div>
+          <h2>${className}</h2>
+          <p>अपना Board चुनें</p>
+        </div>
+      </div>
+
+      <div class="edu-study-body">
+
+        <div class="edu-info-card">
+          <h3>📚 ${className} का Syllabus</h3>
+          <p>
+            अपने School Board को चुनें।
+          </p>
+        </div>
+
+        <div class="edu-subject-grid">
+  `;
+
+  boards.forEach(board => {
+
+    html += `
+      <div class="edu-subject-card"
+           onclick="openEduAIBoard('${className}', '${board}')">
+
+        <div style="font-size:34px;">📚</div>
+
+        <h3>${board}</h3>
+
+        <p>${className}</p>
+
+      </div>
+    `;
+
+  });
+
+  html += `
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.insertAdjacentHTML("beforeend", html);
+}
+
+  
 function openEduAIBoard(className, board) {
 
   const boardSubjects = {
