@@ -1,12 +1,16 @@
+ /* EDUAI INTERFACE FINAL - REPLACE ALL OLD CODE */
+
 (function () {
   "use strict";
 
-  // ==============================
-  // EDUAI INTERFACE - START
-  // ==============================
+  const API = "/api/chat";
 
-  function escapeHTML(text) {
-    return String(text || "")
+  function text(v) {
+    return String(v || "").replace(/\s+/g, " ").trim().toLowerCase();
+  }
+
+  function esc(v) {
+    return String(v ?? "")
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
@@ -14,109 +18,113 @@
       .replace(/'/g, "&#039;");
   }
 
-  function toast(message) {
-    let old = document.getElementById("eduaiToast");
-    if (old) old.remove();
+  function toast(msg) {
+    let x = document.getElementById("eduaiToast");
 
-    const div = document.createElement("div");
-    div.id = "eduaiToast";
-    div.textContent = message;
+    if (!x) {
+      x = document.createElement("div");
+      x.id = "eduaiToast";
 
-    div.style.cssText = `
-      position:fixed;
-      left:50%;
-      bottom:90px;
-      transform:translateX(-50%);
-      background:#087f75;
-      color:white;
-      padding:12px 18px;
-      border-radius:25px;
-      z-index:99999;
-      font-size:14px;
-      box-shadow:0 6px 20px rgba(0,0,0,.25);
-    `;
+      x.style.cssText =
+        "position:fixed;" +
+        "left:50%;" +
+        "bottom:90px;" +
+        "transform:translateX(-50%);" +
+        "z-index:999999;" +
+        "background:#087f75;" +
+        "color:#fff;" +
+        "padding:13px 18px;" +
+        "border-radius:14px;" +
+        "font:600 14px Arial;" +
+        "box-shadow:0 6px 22px #0005;";
 
-    document.body.appendChild(div);
+      document.body.appendChild(x);
+    }
 
-    setTimeout(() => {
-      div.remove();
-    }, 2500);
+    x.textContent = msg;
+    x.style.display = "block";
+
+    clearTimeout(x._timer);
+
+    x._timer = setTimeout(function () {
+      x.style.display = "none";
+    }, 2200);
   }
 
-  function showMessage(title, text) {
-    const old = document.getElementById("eduaiFeatureModal");
-    if (old) old.remove();
+  function show(title, html) {
+    const old = document.getElementById("eduaiModal");
 
-    const modal = document.createElement("div");
-    modal.id = "eduaiFeatureModal";
+    if (old) {
+      old.remove();
+    }
 
-    modal.innerHTML = `
-      <div style="
-        position:fixed;
-        inset:0;
-        background:rgba(0,0,0,.55);
-        z-index:99998;
-        display:flex;
-        align-items:flex-end;
-        justify-content:center;
-      ">
-        <div style="
-          width:100%;
-          max-width:520px;
-          background:white;
-          border-radius:24px 24px 0 0;
-          padding:22px;
-          max-height:80vh;
-          overflow:auto;
-        ">
-          <div style="
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-            margin-bottom:15px;
-          ">
-            <h2 style="margin:0;color:#087f75;">
-              ${escapeHTML(title)}
-            </h2>
+    const bg = document.createElement("div");
 
-            <button id="eduaiModalClose" style="
-              border:0;
-              background:#eef5f4;
-              width:38px;
-              height:38px;
-              border-radius:50%;
-              font-size:20px;
-            ">×</button>
-          </div>
+    bg.id = "eduaiModal";
 
-          <div style="
-            color:#333;
-            line-height:1.7;
-            white-space:pre-wrap;
-          ">${escapeHTML(text)}</div>
-        </div>
-      </div>
-    `;
+    bg.style.cssText =
+      "position:fixed;" +
+      "inset:0;" +
+      "z-index:999998;" +
+      "background:#0009;" +
+      "display:flex;" +
+      "align-items:center;" +
+      "justify-content:center;" +
+      "padding:16px;";
 
-    document.body.appendChild(modal);
+    const box = document.createElement("div");
 
-    document
-      .getElementById("eduaiModalClose")
-      .addEventListener("click", () => modal.remove());
+    box.style.cssText =
+      "width:100%;" +
+      "max-width:520px;" +
+      "max-height:82vh;" +
+      "overflow:auto;" +
+      "background:#fff;" +
+      "border-radius:22px;" +
+      "padding:20px;";
+
+    box.innerHTML =
+      '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+
+      '<h2 style="margin:0;color:#087f75;font:700 20px Arial">' +
+      esc(title) +
+      "</h2>" +
+
+      '<button id="eduaiClose" ' +
+      'style="border:0;background:#eef6f5;width:38px;height:38px;' +
+      'border-radius:50%;font-size:25px;color:#087f75">×</button>' +
+
+      "</div>" +
+
+      '<div style="margin-top:14px;color:#333;font:15px/1.65 Arial">' +
+      html +
+      "</div>";
+
+    bg.appendChild(box);
+
+    document.body.appendChild(bg);
+
+    document.getElementById("eduaiClose").onclick = function () {
+      bg.remove();
+    };
+
+    bg.onclick = function (e) {
+      if (e.target === bg) {
+        bg.remove();
+      }
+    };
   }
 
-  // ==============================
-  // AI REQUEST
-  // ==============================
-
-  async function askEduAI(message) {
+  async function askAI(message) {
     if (!message || !message.trim()) {
-      toast("पहले अपना सवाल लिखें");
+      toast("पहले सवाल लिखें");
       return null;
     }
 
+    toast("AI जवाब तैयार कर रहा है…");
+
     try {
-      const response = await fetch("/api/chat", {
+      const r = await fetch(API, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -126,438 +134,593 @@
         })
       });
 
-      const data = await response.json();
+      const d = await r.json().catch(function () {
+        return {};
+      });
 
-      if (!response.ok) {
-        throw new Error(data.error || "AI response failed");
+      if (!r.ok) {
+        throw new Error(d.error || "AI error");
       }
 
-      return data.reply || data.message || "AI ने कोई उत्तर नहीं दिया।";
+      return d.reply ||
+        d.message ||
+        d.answer ||
+        "जवाब नहीं मिला।";
 
-    } catch (error) {
-      console.error("EduAI Error:", error);
-      toast("AI से कनेक्शन नहीं हो पाया");
+    } catch (e) {
+      console.error(e);
+      toast("AI से जुड़ने में समस्या हुई");
       return null;
     }
-  }
+                            }
+    function result(title, question, answer) {
+    if (!answer) return;
 
-  // ==============================
-  // TOPIC EXPLAIN
-  // ==============================
+    show(
+      title,
+      '<div style="background:#f3f9f8;padding:12px;border-radius:12px;margin-bottom:12px">' +
+      "<b>सवाल:</b><br>" +
+      esc(question) +
+      "</div>" +
+      '<div style="white-space:pre-wrap">' +
+      esc(answer) +
+      "</div>"
+    );
+  }
 
   async function topicExplain() {
-    const topic = prompt("किस topic को समझना है?");
+    const q = prompt("कौन-सा Topic समझना है?");
+    if (!q) return;
 
-    if (!topic || !topic.trim()) return;
-
-    toast("AI topic समझा रहा है...");
-
-    const answer = await askEduAI(
-      `मुझे "${topic}" को आसान हिंदी में समझाओ। 
-पहले basic concept बताओ, फिर step-by-step explanation दो, 
-उदाहरण दो और अंत में important points बताओ।`
+    const a = await askAI(
+      "इस topic को student को आसान Hindi में step-by-step समझाओ, " +
+      "उदाहरण और मुख्य points के साथ.\nTopic: " + q
     );
 
-    if (answer) {
-      showMessage("💡 Topic Explanation", answer);
-    }
+    result("💡 Topic समझाएँ", q, a);
   }
-
-  // ==============================
-  // NOTES
-  // ==============================
 
   async function makeNotes() {
-    const topic = prompt("किस topic के notes बनाने हैं?");
+    const q = prompt("किस topic के Notes बनाने हैं?");
+    if (!q) return;
 
-    if (!topic || !topic.trim()) return;
-
-    toast("Notes तैयार हो रहे हैं...");
-
-    const answer = await askEduAI(
-      `"${topic}" के अच्छे और परीक्षा उपयोगी notes बनाओ।
-Headings, important points, definitions और examples शामिल करो।
-भाषा आसान हिंदी रखो।`
+    const a = await askAI(
+      "इस topic के exam-ready notes बनाओ. " +
+      "Headings, definitions और important points दो.\nTopic: " + q
     );
 
-    if (answer) {
-      showMessage("📝 Study Notes", answer);
-    }
+    result("📝 Notes", q, a);
   }
-
-  // ==============================
-  // QUIZ
-  // ==============================
 
   async function makeQuiz() {
-    const topic = prompt("किस topic का quiz चाहिए?");
+    const q = prompt("किस topic का Quiz चाहिए?");
+    if (!q) return;
 
-    if (!topic || !topic.trim()) return;
-
-    toast("Quiz बनाया जा रहा है...");
-
-    const answer = await askEduAI(
-      `"${topic}" पर 10 MCQ questions बनाओ।
-हर question के 4 options हों और सही answer भी बताओ।`
+    const a = await askAI(
+      "इस topic पर 10 MCQ बनाओ. " +
+      "हर question में 4 options और अंत में answer key दो.\nTopic: " + q
     );
 
-    if (answer) {
-      showMessage("🧠 AI Quiz", answer);
-    }
+    result("🧠 Quiz", q, a);
   }
-
-  // ==============================
-  // STUDY PLAN
-  // ==============================
 
   async function studyPlan() {
-    const subject = prompt("किस subject/topic के लिए study plan चाहिए?");
+    const q = prompt("किस subject/topic के लिए Study Plan चाहिए?");
+    if (!q) return;
 
-    if (!subject || !subject.trim()) return;
-
-    toast("Study plan तैयार हो रहा है...");
-
-    const answer = await askEduAI(
-      `"${subject}" के लिए एक practical student study plan बनाओ।
-Daily schedule, revision, practice और test शामिल करो।`
+    const a = await askAI(
+      q +
+      " के लिए 7 दिन का practical study plan बनाओ, " +
+      "जिसमें study, revision और practice हो."
     );
 
-    if (answer) {
-      showMessage("📅 Study Plan", answer);
-    }
+    result("📅 Study Plan", q, a);
   }
-
-  // ==============================
-  // REVISION
-  // ==============================
 
   async function revision() {
-    const topic = prompt("किस topic का revision करना है?");
+    const q = prompt("किस topic की Revision करनी है?");
+    if (!q) return;
 
-    if (!topic || !topic.trim()) return;
-
-    toast("Revision material तैयार हो रहा है...");
-
-    const answer = await askEduAI(
-      `"${topic}" का quick revision कराओ।
-Important definitions, formulas, facts और exam points बताओ।`
+    const a = await askAI(
+      q +
+      " की quick revision कराओ. Important facts, " +
+      "definitions/formulas और 5 revision questions दो."
     );
 
-    if (answer) {
-      showMessage("🔄 Revision", answer);
-    }
+    result("🔄 Revision", q, a);
   }
-
-  // ==============================
-  // PRACTICE QUIZ
-  // ==============================
 
   async function practiceQuiz() {
-    const topic = prompt("किस topic की practice करनी है?");
+    const q = prompt("Practice के लिए topic बताएं:");
+    if (!q) return;
 
-    if (!topic || !topic.trim()) return;
-
-    toast("Practice questions बन रहे हैं...");
-
-    const answer = await askEduAI(
-      `"${topic}" पर practice के लिए 10 questions बनाओ।
-Easy से शुरू करके धीरे-धीरे difficult करो।`
+    const a = await askAI(
+      q +
+      " पर 10 question का practice test बनाओ, " +
+      "4 options और answer key के साथ."
     );
 
-    if (answer) {
-      showMessage("🎯 Practice", answer);
-    }
+    result("📝 Practice Quiz", q, a);
   }
-
-  // ==============================
-  // VOICE SEARCH
-  // ==============================
-
-  function startVoice() {
-    const SpeechRecognition =
+    function voice() {
+    const SR =
       window.SpeechRecognition ||
       window.webkitSpeechRecognition;
 
-    if (!SpeechRecognition) {
-      toast("इस browser में voice feature उपलब्ध नहीं है");
+    if (!SR) {
+      toast("इस browser में Voice उपलब्ध नहीं है");
       return;
     }
 
-    const recognition = new SpeechRecognition();
+    const r = new SR();
 
-    recognition.lang = "hi-IN";
-    recognition.interimResults = false;
-    recognition.continuous = false;
+    r.lang = "hi-IN";
+    r.interimResults = false;
+    r.maxAlternatives = 1;
 
-    recognition.onstart = function () {
-      toast("🎙️ बोलिए...");
+    r.onstart = function () {
+      toast("🎤 बोलिए…");
     };
 
-    recognition.onresult = function (event) {
-      const text = event.results[0][0].transcript;
+    r.onerror = function () {
+      toast("Voice input में समस्या हुई");
+    };
 
-      const input =
-        document.querySelector(
-          'input[placeholder*="सवाल"], textarea[placeholder*="सवाल"], input[placeholder*="question"], textarea[placeholder*="question"]'
+    r.onresult = function (e) {
+      const value =
+        e.results[0][0].transcript;
+
+      const fields =
+        document.querySelectorAll(
+          'input[type="text"], textarea, input:not([type])'
         );
 
-      if (input) {
-        input.value = text;
-        input.dispatchEvent(new Event("input", { bubbles: true }));
-        toast("सवाल लिख दिया गया");
+      let target = null;
+
+      fields.forEach(function (x) {
+        if (!target && x.offsetParent !== null) {
+          target = x;
+        }
+      });
+
+      if (target) {
+        target.value = value;
+
+        target.dispatchEvent(
+          new Event("input", {
+            bubbles: true
+          })
+        );
+
+        toast("आवाज़ से सवाल लिखा गया ✅");
       } else {
-        showMessage("🎙️ आपका सवाल", text);
+        toast("🎤 " + value);
       }
     };
 
-    recognition.onerror = function () {
-      toast("Voice input नहीं मिला");
-    };
-
-    recognition.start();
+    r.start();
   }
 
-  // ==============================
-  // PHOTO QUESTION
-  // ==============================
-
-  function photoQuestion() {
-    let input = document.getElementById("eduaiPhotoInput");
+  function photo() {
+    let input =
+      document.getElementById(
+        "eduaiPhotoInput"
+      );
 
     if (!input) {
       input = document.createElement("input");
+
+      input.id = "eduaiPhotoInput";
       input.type = "file";
       input.accept = "image/*";
-      input.capture = "environment";
-      input.id = "eduaiPhotoInput";
       input.style.display = "none";
 
       document.body.appendChild(input);
 
-      input.addEventListener("change", function () {
-        const file = input.files && input.files[0];
+      input.onchange = function () {
+        const file =
+          input.files && input.files[0];
 
         if (!file) return;
 
-        const reader = new FileReader();
+        const url =
+          URL.createObjectURL(file);
 
-        reader.onload = function (event) {
-          const preview = document.createElement("div");
+        show(
+          "📷 Photo Question",
 
-          preview.innerHTML = `
-            <img src="${event.target.result}" style="
-              max-width:100%;
-              max-height:280px;
-              border-radius:15px;
-              margin-bottom:15px;
-            ">
-          `;
+          '<img src="' +
+            url +
+            '" style="' +
+            "width:100%;" +
+            "max-height:280px;" +
+            "object-fit:contain;" +
+            "border-radius:14px;" +
+            "background:#f5f5f5" +
+            '">' +
 
-          showMessage(
-            "📷 Photo Question",
-            "Photo select हो गई है। अब इस question को AI से समझने के लिए नीचे AI Tutor में भेजें।"
+          "<p>" +
+          "Photo select हो गई है।" +
+          "</p>" +
+
+          '<button id="photoUse" ' +
+          'style="' +
+          "width:100%;" +
+          "border:0;" +
+          "background:#087f75;" +
+          "color:#fff;" +
+          "padding:13px;" +
+          "border-radius:12px;" +
+          "font-weight:700;" +
+          '">' +
+          "AI Tutor में खोलें" +
+          "</button>"
+        );
+
+        const b =
+          document.getElementById(
+            "photoUse"
           );
-        };
 
-        reader.readAsDataURL(file);
-      });
+        if (b) {
+          b.onclick = function () {
+            toast(
+              "Photo AI Tutor में upload करें"
+            );
+
+            const chatPhoto =
+              document.getElementById(
+                "chatPhoto"
+              );
+
+            if (chatPhoto) {
+              const modal =
+                document.getElementById(
+                  "eduaiModal"
+                );
+
+              if (modal) {
+                modal.remove();
+              }
+
+              chatPhoto.click();
+            }
+          };
+        }
+      };
     }
 
+    input.value = "";
     input.click();
   }
 
-  // ==============================
-  // LANGUAGE
-  // ==============================
-
-  function languageToggle() {
-    const current =
-      localStorage.getItem("eduai-language") || "hi";
-
-    const next = current === "hi" ? "en" : "hi";
-
-    localStorage.setItem("eduai-language", next);
-
-    toast(
-      next === "hi"
-       localStorage.setItem("eduai-language", next);
-
-    toast(
-      next === "hi"
-        ? "हिंदी भाषा चुनी गई"
-        : "English language selected"
-    );
-  }
-
-  // ==============================
-  // PROFILE
-  // ==============================
-
   function profile() {
-    showMessage(
-      "👤 Profile",
-      "EduAI Student Profile\n\n" +
-      "📚 Courses\n" +
-      "📝 Notes\n" +
-      "🧠 Quiz History\n" +
-      "📊 Progress\n" +
-      "🎯 Study Goals"
+    show(
+      "👤 EduAI Profile",
+
+      "<b>Student Profile</b>" +
+      "<br><br>" +
+      "अपनी class, board और subjects " +
+      "चुनकर personalised study शुरू करें।"
     );
   }
 
-  // ==============================
-  // COURSES
-  // ==============================
+  function language() {
+    toast("Hindi / English");
+  }
 
-  function openCourses() {
-    if (typeof window.openEduAIClass === "function") {
-      window.openEduAIClass("Class 1-5");
+  function courses() {
+    if (
+      typeof window.openEduAIClass ===
+      "function"
+    ) {
+      window.openEduAIClass(
+        "Class 1-5"
+      );
     } else {
-      showMessage(
-        "📚 Courses",
-        "Courses section loading..."
+      toast(
+        "Courses अभी load हो रहे हैं"
       );
     }
   }
 
-  // ==============================
-  // GLOBAL ACCESS
-  // ==============================
-
-  window.EduAIInterface = {
-    toast,
-    askEduAI,
-    topicExplain,
-    makeNotes,
-    makeQuiz,
-    studyPlan,
-    revision,
-    practiceQuiz,
-    photoQuestion,
-    startVoice,
-    languageToggle,
-    profile,
-    openCourses
-  };
-
-  console.log("EduAI Interface Loaded ✅");
-
-})();
-// ==========================================
-// EDUAI BUTTON CONNECTION
-// ==========================================
-
-document.addEventListener("DOMContentLoaded", function () {
-
-  function connectButton(words, action) {
-    const elements = document.querySelectorAll("button, .card, .chip, a");
-
-    elements.forEach(function (el) {
-
-      if (el.dataset.eduaiConnected === "1") return;
-
-      const text = (el.innerText || el.textContent || "")
-        .trim()
-        .toLowerCase();
-
-      if (!text) return;
-
-      const found = words.some(function (word) {
-        return text.includes(word.toLowerCase());
-      });
-
-      if (found) {
-        el.dataset.eduaiConnected = "1";
-
-        el.addEventListener("click", function (event) {
-          event.preventDefault();
-
-          try {
-            action();
-          } catch (error) {
-            console.error("EduAI Button Error:", error);
-          }
+  function tutor() {
+    if (
+      typeof window.createChatScreen ===
+      "function"
+    ) {
+      window.createChatScreen();
+    } else {
+      const el =
+        [...document.querySelectorAll(
+          "button,a,[role='button']"
+        )].find(function (x) {
+          return text(
+            x.innerText ||
+            x.textContent
+          ).includes("ai tutor");
         });
+
+      if (el) {
+        el.click();
+      } else {
+        toast(
+          "AI Tutor नहीं खुल पाया"
+        );
       }
-    });
+    }
   }
 
-  // Topic समझाएँ
-  connectButton(
-    ["topic समझाएँ", "topic samjhayen", "topic samjhao"],
-    function () {
-      window.EduAIInterface.topicExplain();
-    }
-  );
-
-  // Notes
-  connectButton(
-    ["notes बनाएं", "notes banaye", "notes"],
-    function () {
-      window.EduAIInterface.makeNotes();
-    }
-  );
-
-  // Quiz
-  connectButton(
-    ["quiz बनाएं", "quiz banaye", "quiz"],
-    function () {
-      window.EduAIInterface.makeQuiz();
-    }
-  );
-
-  // Study Plan
-  connectButton(
-    ["study plan", "studyplan"],
-    function () {
-      window.EduAIInterface.studyPlan();
-    }
-  );
-
-  // Revision
-  connectButton(
-    ["revision", "रिविजन"],
-    function () {
-      window.EduAIInterface.revision();
-    }
-  );
-
-  // Practice Quiz
-  connectButton(
-    ["practice quiz", "practice"],
-    function () {
-      window.EduAIInterface.practiceQuiz();
-    }
-  );
-
-  // Photo Question
-  connectButton(
-    ["photo question", "photo", "फोटो"],
-    function () {
-      window.EduAIInterface.photoQuestion();
-    }
-  );
-
-  // Voice / microphone
-  document.querySelectorAll("button").forEach(function (button) {
-
-    const label = (
-      button.innerText ||
-      button.getAttribute("aria-label") ||
-      ""
-    ).toLowerCase();
+  function home() {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+}
+    function action(label, el) {
+    const t = text(label);
 
     if (
-      label.includes("mic") ||
-      label.includes("voice") ||
-      label.includes("माइक")
+      el.closest("#eduaiStudyScreen")
     ) {
-      button.addEventListener("click", function () {
-        window.EduAIInterface.startVoice();
-      });
+      return false;
     }
-  });
 
-  console.log("EduAI Buttons Connected ✅");
+    if (
+      t.includes("topic समझाएँ") ||
+      t.includes("topic samjha") ||
+      t.includes("explain topic")
+    ) {
+      topicExplain();
+      return true;
+    }
 
-});
+    if (
+      t.includes("notes बनाएं") ||
+      t.includes("notes bana") ||
+      t.includes("make notes")
+    ) {
+      makeNotes();
+      return true;
+    }
+
+    if (
+      t.includes("quiz बनाएं") ||
+      t.includes("quiz bana") ||
+      t.includes("make quiz")
+    ) {
+      makeQuiz();
+      return true;
+    }
+
+    if (
+      t.includes("study plan") ||
+      t.includes("studyplan") ||
+      t.includes("स्टडी प्लान")
+    ) {
+      studyPlan();
+      return true;
+    }
+
+    if (
+      t.includes("revision") ||
+      t.includes("रिविजन") ||
+      t.includes("रिवीजन")
+    ) {
+      revision();
+      return true;
+    }
+
+    if (
+      t.includes("practice quiz") ||
+      t === "practice" ||
+      t.includes("प्रैक्टिस")
+    ) {
+      practiceQuiz();
+      return true;
+    }
+
+    if (
+      t.includes("photo question") ||
+      t.includes("फोटो question") ||
+      t === "photo" ||
+      t.includes("फोटो")
+    ) {
+      photo();
+      return true;
+    }
+
+    return false;
+  }
+
+  function connect() {
+    if (window.__eduaiFinalConnected) {
+      return;
+    }
+
+    window.__eduaiFinalConnected = true;
+
+    document.addEventListener(
+      "click",
+      function (e) {
+             const el = e.target.closest(
+          "button,a,[role='button'],.card,.chip,.tool-card,.quick-action"
+        );
+
+        if (!el) {
+          return;
+        }
+
+        const label =
+          (el.innerText ||
+            el.textContent ||
+            "") +
+          " " +
+          (el.getAttribute(
+            "aria-label"
+          ) || "");
+
+        const t = text(label);
+
+        /* MIC / VOICE */
+
+        if (
+          t.includes("mic") ||
+          t.includes("voice") ||
+          t.includes("माइक")
+        ) {
+
+          if (
+            el.id === "chatMic" ||
+            el.id === "micBtn" ||
+            el.closest("#eduaiChatScreen")
+          ) {
+            return;
+          }
+
+          e.preventDefault();
+          e.stopImmediatePropagation();
+
+          voice();
+          return;
+        }
+
+        /* LANGUAGE */
+
+        if (
+          t === "हि" ||
+          t === "हिंदी" ||
+          t.includes("language")
+        ) {
+
+          e.preventDefault();
+
+          language();
+          return;
+        }
+
+        /* HOME */
+
+        if (
+          t === "home" ||
+          t.includes("होम")
+        ) {
+
+          home();
+          return;
+        }
+
+        /* COURSES */
+
+        if (
+          t === "courses" ||
+          t.includes("कोर्स")
+        ) {
+
+          e.preventDefault();
+          e.stopImmediatePropagation();
+
+          courses();
+          return;
+        }
+
+        /* AI TUTOR */
+
+        if (
+          t === "ai tutor" ||
+          t.includes("ai tutor")
+        ) {
+
+          e.preventDefault();
+          e.stopImmediatePropagation();
+
+          tutor();
+          return;
+        }
+
+        /* PROFILE */
+
+        if (
+          t === "profile" ||
+          t.includes("प्रोफाइल")
+        ) {
+
+          e.preventDefault();
+
+          profile();
+          return;
+        }
+
+        /* QUICK ACTIONS */
+
+        if (
+          action(label, el)
+        ) {
+
+          e.preventDefault();
+          e.stopImmediatePropagation();
+
+          return;
+        }
+
+      },
+      true
+    );
+
+    window.EduAIInterface = {
+
+      toast: toast,
+
+      askAI: askAI,
+
+      topicExplain: topicExplain,
+
+      makeNotes: makeNotes,
+
+      makeQuiz: makeQuiz,
+
+      studyPlan: studyPlan,
+
+      revision: revision,
+
+      practiceQuiz: practiceQuiz,
+
+      startVoice: voice,
+
+      photoQuestion: photo,
+
+      languageToggle: language,
+
+      profile: profile,
+
+      openCourses: courses,
+
+      openAITutor: tutor
+
+    };
+
+    console.log(
+      "EduAI FINAL INTERFACE LOADED ✅"
+    );
+  }
+
+  if (
+    document.readyState ===
+    "loading"
+  ) {
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      connect,
+      {
+        once: true
+      }
+    );
+
+  } else {
+
+    connect();
+
+  }
+
+})();
