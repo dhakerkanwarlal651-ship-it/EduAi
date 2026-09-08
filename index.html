@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0f766e">
+  <title>EduAI — Smart AI Study Assistant</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand"><div class="logo">E</div><div><b>EduAI</b><small>Smart Study Assistant</small></div></div>
+      <button class="icon-btn" id="langBtn" aria-label="Language">हि</button>
+    </header>
+
+    <main id="content">
+      <section class="hero">
+        <span class="eyebrow">YOUR PERSONAL AI TUTOR</span>
+        <h1>पढ़ाई का हर सवाल,<br><span>एक जगह।</span></h1>
+        <p>Topic समझें, सवाल हल करें, notes बनाएं और practice करें।</p>
+        <div class="search">
+          <input id="question" placeholder="अपनी पढ़ाई का सवाल लिखें…">
+          <button id="micBtn" title="Voice question">🎙️</button>
+          <button id="askBtn" class="ask">पूछें</button>
+        </div>
+        <div class="quick">
+          <button data-q="गणित का यह सवाल आसान तरीके से समझाओ">✏️ सवाल हल करें</button>
+          <button data-q="Photosynthesis को आसान भाषा में समझाओ">💡 Topic समझाएं</button>
+          <button data-q="इस topic के short notes बनाओ">📝 Notes बनाएं</button>
+          <button data-q="इस topic का quiz बनाओ">🧠 Quiz बनाएं</button>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title"><h2>आप क्या पढ़ना चाहते हैं?</h2><button id="allCourses">सभी</button></div>
+        <div class="course-grid">
+          <button class="course" data-course="Nursery"><span>🌱</span><b>Nursery</b><small>Basics</small></button>
+          <button class="course" data-course="Class 1-5"><span>📚</span><b>Class 1–5</b><small>Primary</small></button>
+          <button class="course" data-course="Class 6-8"><span>🔬</span><b>Class 6–8</b><small>Middle</small></button>
+          <button class="course" data-course="Class 9-10"><span>📐</span><b>Class 9–10</b><small>Foundation</small></button>
+          <button class="course" data-course="Class 11-12"><span>🎓</span><b>Class 11–12</b><small>Senior</small></button>
+          <button class="course" data-course="College"><span>🏛️</span><b>BA / BSc / BCom</b><small>Graduation</small></button>
+          <button class="course" data-course="MA"><span>📖</span><b>MA</b><small>Post Graduation</small></button>
+          <button class="course" data-course="UPSC"><span>🇮🇳</span><b>UPSC</b><small>Civil Services</small></button>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title"><h2>Study Tools</h2></div>
+        <div class="tools">
+          <button class="tool" id="photoTool"><span>📷</span><div><b>Photo Question</b><small>Question की photo चुनें</small></div><strong>›</strong></button>
+          <button class="tool" data-q="मुझे आज के लिए 2 घंटे का study plan बनाओ"><span>🗓️</span><div><b>Study Plan</b><small>अपने समय के अनुसार plan</small></div><strong>›</strong></button>
+          <button class="tool" data-q="मेरे लिए revision plan बनाओ"><span>🔁</span><div><b>Revision</b><small>याद रखने की smart practice</small></div><strong>›</strong></button>
+          <button class="tool" data-q="भारत के संविधान पर 10 प्रश्नों का quiz बनाओ"><span>🧩</span><div><b>Practice Quiz</b><small>अपनी तैयारी जांचें</small></div><strong>›</strong></button>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-title"><h2>AI Tutor</h2><span class="status">● Ready</span></div>
+        <div id="answer" class="answer empty">
+          <div class="answer-icon">✨</div>
+          <h3>AI Tutor से पूछें</h3>
+          <p>ऊपर अपना सवाल लिखें। यह demo version sample answers देता है। Real AI API बाद में जोड़ी जा सकती है।</p>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button class="nav active" data-page="home">⌂<small>Home</small></button>
+      <button class="nav" data-page="courses">▦<small>Courses</small></button>
+      <button class="nav" data-page="tutor">✦<small>AI Tutor</small></button>
+      <button class="nav" data-page="practice">✓<small>Practice</small></button>
+      <button class="nav" data-page="profile">◉<small>Profile</small></button>
+    </nav>
+    <input type="file" id="photoInput" accept="image/*" capture="environment" hidden>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
