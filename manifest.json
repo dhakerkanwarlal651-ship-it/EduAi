@@ -1,0 +1,13 @@
+{
+  "name": "EduAI – Smart AI Study Assistant",
+  "short_name": "EduAI",
+  "description": "AI-powered study assistant for students",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f7fbfa",
+  "theme_color": "#0f766e",
+  "lang": "hi",
+  "dir": "ltr"
+}
