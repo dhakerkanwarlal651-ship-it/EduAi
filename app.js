@@ -859,46 +859,100 @@ function openEduAIClassNumber(className) {
   
 function openEduAIBoard(className, board) {
 
-  const boardSubjects = {
-    "CBSE": [
+  
+const boardSubjects = {
+
+  "CBSE": {
+
+    "Class 1": ["Hindi", "English", "Mathematics", "EVS"],
+    "Class 2": ["Hindi", "English", "Mathematics", "EVS"],
+    "Class 3": ["Hindi", "English", "Mathematics", "EVS"],
+    "Class 4": ["Hindi", "English", "Mathematics", "EVS"],
+    "Class 5": ["Hindi", "English", "Mathematics", "EVS"],
+
+    "Class 6": ["Hindi", "English", "Mathematics", "Science", "Social Science"],
+    "Class 7": ["Hindi", "English", "Mathematics", "Science", "Social Science"],
+    "Class 8": ["Hindi", "English", "Mathematics", "Science", "Social Science"],
+
+    "Class 9": ["Hindi", "English", "Mathematics", "Science", "Social Science"],
+    "Class 10": ["Hindi", "English", "Mathematics", "Science", "Social Science"],
+
+    "Class 11": [
       "Hindi",
       "English",
-      "Mathematics",
-      "Science",
-      "Social Science",
       "Physics",
       "Chemistry",
+      "Mathematics",
       "Biology",
-      "Computer Science",
-      "Economics",
       "Accountancy",
-      "Business Studies"
+      "Business Studies",
+      "Economics",
+      "Computer Science"
     ],
 
-    "MP Board": [
+    "Class 12": [
       "Hindi",
       "English",
-      "Mathematics",
-      "Science",
-      "Social Science",
       "Physics",
       "Chemistry",
+      "Mathematics",
       "Biology",
-      "History",
-      "Geography",
-      "Political Science",
-      "Economics"
+      "Accountancy",
+      "Business Studies",
+      "Economics",
+      "Computer Science"
     ]
-  };
+  },
 
-  const subjects = boardSubjects[board] || [
+  "MP Board": {
+
+    "Class 1": ["Hindi", "English", "Mathematics", "EVS"],
+    "Class 2": ["Hindi", "English", "Mathematics", "EVS"],
+    "Class 3": ["Hindi", "English", "Mathematics", "EVS"],
+    "Class 4": ["Hindi", "English", "Mathematics", "EVS"],
+    "Class 5": ["Hindi", "English", "Mathematics", "EVS"],
+
+    "Class 6": ["Hindi", "English", "Mathematics", "Science", "Social Science"],
+    "Class 7": ["Hindi", "English", "Mathematics", "Science", "Social Science"],
+    "Class 8": ["Hindi", "English", "Mathematics", "Science", "Social Science"],
+
+    "Class 9": ["Hindi", "English", "Mathematics", "Science", "Social Science"],
+    "Class 10": ["Hindi", "English", "Mathematics", "Science", "Social Science"],
+
+    "Class 11": [
+      "Hindi",
+      "English",
+      "Physics",
+      "Chemistry",
+      "Mathematics",
+      "Biology",
+      "Economics",
+      "History",
+      "Political Science"
+    ],
+
+    "Class 12": [
+      "Hindi",
+      "English",
+      "Physics",
+      "Chemistry",
+      "Mathematics",
+      "Biology",
+      "Economics",
+      "History",
+      "Political Science"
+    ]
+  }
+};
+
+const subjects =
+  boardSubjects?.[board]?.[className] || [
     "Hindi",
     "English",
     "Mathematics",
     "Science",
     "Social Science"
   ];
-
   let html = `
     <div id="eduaiStudyScreen" class="edu-study-page">
 
