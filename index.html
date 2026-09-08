@@ -77,12 +77,22 @@
     <input type="file" id="photoInput" accept="image/*" capture="environment" hidden>
   </div>
   <script src="app.js"></script>
+
 <script>
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./sw.js");
+      navigator.serviceWorker.register("./sw.js")
+        .then(() => {
+          console.log("EduAI Service Worker Registered ✅");
+        })
+        .catch((error) => {
+          console.log("Service Worker Error:", error);
+        });
     });
   }
 </script>
+
+<script src="./eduai-interface.js"></script>
+
 </body>
 </html>
