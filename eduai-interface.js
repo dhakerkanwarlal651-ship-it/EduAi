@@ -443,3 +443,121 @@ Easy से शुरू करके धीरे-धीरे difficult कर
   console.log("EduAI Interface Loaded ✅");
 
 })();
+// ==========================================
+// EDUAI BUTTON CONNECTION
+// ==========================================
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  function connectButton(words, action) {
+    const elements = document.querySelectorAll("button, .card, .chip, a");
+
+    elements.forEach(function (el) {
+
+      if (el.dataset.eduaiConnected === "1") return;
+
+      const text = (el.innerText || el.textContent || "")
+        .trim()
+        .toLowerCase();
+
+      if (!text) return;
+
+      const found = words.some(function (word) {
+        return text.includes(word.toLowerCase());
+      });
+
+      if (found) {
+        el.dataset.eduaiConnected = "1";
+
+        el.addEventListener("click", function (event) {
+          event.preventDefault();
+
+          try {
+            action();
+          } catch (error) {
+            console.error("EduAI Button Error:", error);
+          }
+        });
+      }
+    });
+  }
+
+  // Topic समझाएँ
+  connectButton(
+    ["topic समझाएँ", "topic samjhayen", "topic samjhao"],
+    function () {
+      window.EduAIInterface.topicExplain();
+    }
+  );
+
+  // Notes
+  connectButton(
+    ["notes बनाएं", "notes banaye", "notes"],
+    function () {
+      window.EduAIInterface.makeNotes();
+    }
+  );
+
+  // Quiz
+  connectButton(
+    ["quiz बनाएं", "quiz banaye", "quiz"],
+    function () {
+      window.EduAIInterface.makeQuiz();
+    }
+  );
+
+  // Study Plan
+  connectButton(
+    ["study plan", "studyplan"],
+    function () {
+      window.EduAIInterface.studyPlan();
+    }
+  );
+
+  // Revision
+  connectButton(
+    ["revision", "रिविजन"],
+    function () {
+      window.EduAIInterface.revision();
+    }
+  );
+
+  // Practice Quiz
+  connectButton(
+    ["practice quiz", "practice"],
+    function () {
+      window.EduAIInterface.practiceQuiz();
+    }
+  );
+
+  // Photo Question
+  connectButton(
+    ["photo question", "photo", "फोटो"],
+    function () {
+      window.EduAIInterface.photoQuestion();
+    }
+  );
+
+  // Voice / microphone
+  document.querySelectorAll("button").forEach(function (button) {
+
+    const label = (
+      button.innerText ||
+      button.getAttribute("aria-label") ||
+      ""
+    ).toLowerCase();
+
+    if (
+      label.includes("mic") ||
+      label.includes("voice") ||
+      label.includes("माइक")
+    ) {
+      button.addEventListener("click", function () {
+        window.EduAIInterface.startVoice();
+      });
+    }
+  });
+
+  console.log("EduAI Buttons Connected ✅");
+
+});
