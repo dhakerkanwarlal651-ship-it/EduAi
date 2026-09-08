@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.vercel.edu_ai_gold_nine.twa",
+        "sha256_cert_fingerprints": ["02:00:34:F9:14:D7:74:35:19:BE:F4:C7:B4:1B:9F:BF:47:25:B8:EE:24:91:31:AA:78:8A:CE:7E:A4:DC:75:DC"]
+      }
+    }]
