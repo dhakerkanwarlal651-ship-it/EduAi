@@ -1289,3 +1289,374 @@ document.addEventListener("click", function(e) {
   }
 
 }, true);
+/* =========================================
+   EDUAI COMMON BOARD + SYLLABUS SYSTEM
+   ========================================= */
+
+const eduaiBoardSyllabus = {
+
+  "CBSE": {
+
+    "Class 1": {},
+    "Class 2": {},
+    "Class 3": {},
+    "Class 4": {},
+    "Class 5": {},
+    "Class 6": {},
+    "Class 7": {},
+    "Class 8": {},
+    "Class 9": {},
+    "Class 10": {},
+    "Class 11": {},
+    "Class 12": {}
+
+  },
+
+  "MP Board": {
+
+    "Class 1": {},
+    "Class 2": {},
+    "Class 3": {},
+    "Class 4": {},
+    "Class 5": {},
+    "Class 6": {},
+    "Class 7": {},
+    "Class 8": {},
+    "Class 9": {},
+    "Class 10": {},
+    "Class 11": {},
+    "Class 12": {}
+
+  },
+
+  "Rajasthan Board": {},
+  "UP Board": {},
+  "Bihar Board": {},
+  "Maharashtra Board": {},
+  "Gujarat Board": {},
+  "Haryana Board": {},
+  "Punjab Board": {},
+  "CISCE / ICSE": {},
+  "West Bengal Board": {},
+  "Karnataka Board": {},
+  "Tamil Nadu Board": {},
+  "Andhra Pradesh Board": {},
+  "Telangana Board": {},
+  "Chhattisgarh Board": {},
+  "Odisha Board": {},
+  "Jharkhand Board": {},
+  "Kerala Board": {},
+  "Assam Board": {},
+  "Himachal Pradesh Board": {},
+  "Jammu & Kashmir Board": {},
+  "Uttarakhand Board": {},
+  "Goa Board": {},
+  "Manipur Board": {},
+  "Meghalaya Board": {},
+  "Mizoram Board": {},
+  "Nagaland Board": {},
+  "Tripura Board": {}
+
+};
+
+
+/* =========================================
+   OPEN CLASS INSIDE SELECTED BOARD
+   ========================================= */
+
+function openEduAIBoardClass(board, className) {
+
+  const data =
+    eduaiBoardSyllabus?.[board]?.[className] || {};
+
+  const subjects = Object.keys(data);
+
+  let html = `
+    <div id="eduaiStudyScreen" class="edu-study-page">
+
+      <div class="edu-study-header">
+        <button onclick="location.reload()">←</button>
+
+        <div>
+          <h2>${board}</h2>
+          <p>${className}</p>
+        </div>
+      </div>
+
+      <div class="edu-study-body">
+
+        <div class="edu-info-card">
+          <h3>📚 ${board} • ${className}</h3>
+          <p>अपना Subject चुनें</p>
+        </div>
+
+        <div class="edu-subject-grid">
+  `;
+
+  if (subjects.length === 0) {
+
+    html += `
+      <div class="edu-info-card">
+        <h3>📖 Syllabus तैयार किया जा रहा है</h3>
+        <p>
+          इस Board और Class का official syllabus
+          जल्द यहाँ जोड़ा जाएगा।
+        </p>
+      </div>
+    `;
+
+  } else {
+
+    subjects.forEach(subject => {
+
+      html += `
+        <div class="edu-subject-card"
+             onclick="openEduAISyllabusSubject(
+               '${board}',
+               '${className}',
+               '${subject}'
+             )">
+
+          <div style="font-size:32px;">📘</div>
+
+          <h3>${subject}</h3>
+
+          <p>सभी Chapters देखें</p>
+
+        </div>
+      `;
+
+    });
+
+  }
+
+  html += `
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.insertAdjacentHTML("beforeend", html);
+}
+
+
+/* =========================================
+   OPEN SUBJECT
+   ========================================= */
+
+function openEduAISyllabusSubject(board, className, subject) {
+
+  const subjectData =
+    eduaiBoardSyllabus?.[board]?.[className]?.[subject] || {};
+
+  const chapters = Object.keys(subjectData);
+
+  let html = `
+    <div id="eduaiStudyScreen" class="edu-study-page">
+
+      <div class="edu-study-header">
+
+        <button onclick="location.reload()">←</button>
+
+        <div>
+          <h2>${subject}</h2>
+          <p>${board} • ${className}</p>
+        </div>
+
+      </div>
+
+      <div class="edu-study-body">
+
+        <div class="edu-info-card">
+
+          <h3>📖 ${subject}</h3>
+
+          <p>
+            ${board} ${className} का पूरा syllabus
+          </p>
+
+        </div>
+
+        <div class="edu-chapter-list">
+  `;
+
+  if (chapters.length === 0) {
+
+    html += `
+      <div class="edu-info-card">
+
+        <h3>📚 Chapters जल्द उपलब्ध होंगे</h3>
+
+        <p>
+          Official syllabus के अनुसार chapters
+          यहाँ जोड़े जाएंगे।
+        </p>
+
+      </div>
+    `;
+
+  } else {
+
+    chapters.forEach((chapter, index) => {
+
+      html += `
+        <div class="edu-chapter-card"
+             onclick="openEduAISyllabusChapter(
+               '${board}',
+               '${className}',
+               '${subject}',
+               '${chapter}'
+             )">
+
+          <div class="edu-chapter-number">
+            ${index + 1}
+          </div>
+
+          <div>
+            <h3>${chapter}</h3>
+            <p>पूरा Chapter पढ़ें →</p>
+          </div>
+
+        </div>
+      `;
+
+    });
+
+  }
+
+  html += `
+        </div>
+
+      </div>
+    </div>
+  `;
+
+  document.body.insertAdjacentHTML("beforeend", html);
+}
+
+
+/* =========================================
+   OPEN CHAPTER
+   ========================================= */
+
+function openEduAISyllabusChapter(
+  board,
+  className,
+  subject,
+  chapter
+) {
+
+  const chapterData =
+    eduaiBoardSyllabus?.[board]?.[className]?.[subject]?.[chapter] || {};
+
+  let html = `
+    <div id="eduaiStudyScreen" class="edu-study-page">
+
+      <div class="edu-study-header">
+
+        <button onclick="location.reload()">←</button>
+
+        <div>
+          <h2>${chapter}</h2>
+          <p>${board} • ${className}</p>
+        </div>
+
+      </div>
+
+      <div class="edu-study-body">
+
+        <div class="edu-info-card">
+
+          <h2>📖 ${chapter}</h2>
+
+          <p>
+            ${subject} • ${board} • ${className}
+          </p>
+
+        </div>
+
+        <div class="edu-content-card">
+
+          <h3>📚 अध्याय की जानकारी</h3>
+
+          <p>
+            ${chapterData.intro ||
+            "इस अध्याय की पूरी जानकारी यहाँ उपलब्ध होगी।"}
+          </p>
+
+        </div>
+
+        <div class="edu-content-card">
+
+          <h3>⭐ महत्वपूर्ण बिंदु</h3>
+
+          <p>
+            ${chapterData.points ||
+            "महत्वपूर्ण बिंदु यहाँ दिए जाएंगे।"}
+          </p>
+
+        </div>
+
+        <button
+          class="edu-ai-study-btn"
+          onclick="askEduAIFromSyllabus(
+            '${board}',
+            '${className}',
+            '${subject}',
+            '${chapter}'
+          )">
+
+          🤖 AI से यह Chapter समझें
+
+        </button>
+
+      </div>
+    </div>
+  `;
+
+  document.body.insertAdjacentHTML("beforeend", html);
+}
+
+
+/* =========================================
+   ASK AI FROM CHAPTER
+   ========================================= */
+
+function askEduAIFromSyllabus(
+  board,
+  className,
+  subject,
+  chapter
+) {
+
+  const question =
+    `${board} ${className} ${subject} के "${chapter}" ` +
+    `अध्याय को आसान भाषा में step-by-step समझाओ। ` +
+    `Important points और exam questions भी बताओ।`;
+
+  const input =
+    document.querySelector(
+      "#questionInput, #userQuestion, textarea, input[type='text']"
+    );
+
+  if (input) {
+
+    input.value = question;
+
+    input.dispatchEvent(
+      new Event("input", { bubbles: true })
+    );
+
+    const askButton =
+      [...document.querySelectorAll("button")]
+      .find(btn =>
+        /पूछें|ask/i.test(btn.innerText)
+      );
+
+    if (askButton) {
+      askButton.click();
+    }
+
+  }
+
+  }
